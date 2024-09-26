@@ -13,8 +13,7 @@ const pieceDescriptions = {
   },
   P: {
     name: "Pion",
-    description:
-      "Se déplace d'une case en avant et capture de la même manière.",
+    description: "Se déplace d'une case en avant et capture en diagonale.",
   },
   L: {
     name: "Lance",
@@ -97,14 +96,18 @@ const Shogi = () => {
     const capturedPiece = newBoard[row][col];
     newBoard[row][col] = board[selectedPiece.row][selectedPiece.col];
     newBoard[selectedPiece.row][selectedPiece.col] = null;
-
     const opponentKingPosition = findOpponentKingPosition();
     if (!isInCheck(opponentKingPosition, newBoard)) {
       setBoard(newBoard);
       setTurn(turn === 1 ? 2 : 1);
       setMoveHistory([
         ...moveHistory,
-        { from: selectedPiece, to: { row, col }, piece: capturedPiece },
+        {
+          from: selectedPiece,
+          player: turn,
+          to: { row, col },
+          piece: capturedPiece,
+        },
       ]);
       setSelectedPiece(null);
       setValidPositions([]);
@@ -122,7 +125,7 @@ const Shogi = () => {
       setTurn(turn === 1 ? 2 : 1);
       setMoveHistory([
         ...moveHistory,
-        { from: selectedPiece, to: { row, col }, piece: null },
+        { from: selectedPiece, player: turn, to: { row, col }, piece: null },
       ]);
       setSelectedPiece(null);
       setValidPositions([]);
@@ -155,11 +158,11 @@ const Shogi = () => {
 
   return (
     <div
-      className={`flex min-h-screen ${
+      className={`flex space-center min-h-screen ${
         turn === 1 ? "bg-gray-800" : "bg-gray-600"
       }`}
     >
-      <div className="flex flex-col items-center justify-center w-3/4">
+      <div className="flex flex-col items-center justify-center w-1/2 ml-20">
         {!winner && (
           <h2 className="text-2xl font-bold mb-4 text-white">
             Tour du Joueur {turn}
@@ -183,9 +186,9 @@ const Shogi = () => {
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   onClick={() => handleClick(rowIndex, colIndex)}
-                  className={`cursor-pointer hover:font-bold w-12 h-12 flex items-center justify-center border-2 border-gray-400 transition-transform duration-200 ease-in-out transform ${
+                  className={`cursor-pointer hover:font-bold w-12 h-12 flex items-center justify-center border-2 border-gray-400 transition-transform duration-200 ease-in-out transform  ${
                     isSelected ? "bg-yellow-500 scale-110" : ""
-                  } ${isValidMove ? "bg-green-500 scale-110" : ""} text-white`}
+                  } ${isValidMove ? "bg-green-500 scale-110" : ""}  text-white`}
                 >
                   {piece}
                 </div>
@@ -206,28 +209,34 @@ const Shogi = () => {
           Reset
         </button>
       </div>
-      <div className="w-1/4 p-4 bg-gray-700 rounded-lg shadow-lg m-4 border border-gray-600">
-        <h3 className="text-lg font-bold mb-2 text-white">
-          Historique des Coups
-        </h3>
-        <ul className="max-h-40 overflow-y-auto">
-          {moveHistory.map((move, index) => (
-            <li
-              key={index}
-              className="border-b border-gray-600 py-1 text-white"
-            >
-              {`De (${move.from.row}, ${move.from.col}) à (${move.to.row}, ${
-                move.to.col
-              }) ${move.piece ? `- Pièce capturée: ${move.piece}` : ""}`}
-            </li>
-          ))}
-        </ul>
-        {pieceInfo && (
-          <div className="mt-4 border-t border-gray-600 pt-2 text-white">
-            <h4 className="font-semibold">{pieceInfo.name}</h4>
-            <p className="text-gray-300">{pieceInfo.description}</p>
-          </div>
-        )}
+      <div className="flex flex-col w-1/4">
+        <div className="h-3/4 p-4 bg-gray-700 rounded-lg shadow-lg m-4 border border-gray-600">
+          <h3 className="text-lg font-bold mb-2 text-white">
+            Historique des Coups
+          </h3>
+          <ul className="overflow-y-auto">
+            {moveHistory.map((move, index) => (
+              <li
+                key={index}
+                className="border-b border-gray-600 py-1 text-white"
+              >
+                <span className="font-bold">J{move.player} : </span>
+                {`(${move.from.row}, ${move.from.col}) à (${move.to.row}, ${
+                  move.to.col
+                }) ${move.piece ? `- Pièce capturée: ${move.piece}` : ""}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="h-1/4 p-4 bg-gray-700 rounded-lg shadow-lg m-4 border border-gray-600">
+          <h3 className="text-lg font-bold mb-2 text-white">Description</h3>
+          {pieceInfo && (
+            <div className="mt-4 border-t border-gray-600 pt-2 text-white">
+              <h4 className="font-semibold">{pieceInfo.name}</h4>
+              <p className="text-gray-300">{pieceInfo.description}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

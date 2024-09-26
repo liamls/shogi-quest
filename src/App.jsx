@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Shogi from "./pages/Shogi";
 
 function App() {
+  useEffect(() => {
+    document.title = "Shogi Quest";
+  });
+
   return (
     <Router>
       <Routes>
