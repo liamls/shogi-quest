@@ -13,19 +13,19 @@ const getValidMoves = (row, col, piece, player, board) => {
     if (isInBounds(r, c)) {
       if (isEmpty(r, c)) {
         moves.push({ row: r, col: c });
-        return true; // Mouvement ajouté
+        return true; 
       } else if (isEnemy(r, c)) {
         moves.push({ row: r, col: c });
-        return false; // Arrêter ici, ennemi rencontré
+        return false; 
       }
     }
-    return false; // Rencontré un obstacle (allie ou hors limites)
+    return false;
   };
 
   const moveKing = () => {
     for (let r = -1; r <= 1; r++) {
       for (let c = -1; c <= 1; c++) {
-        if (r === 0 && c === 0) continue; // Ne pas se déplacer vers soi-même
+        if (r === 0 && c === 0) continue;
         addMove(row + r, col + c);
       }
     }
@@ -33,41 +33,41 @@ const getValidMoves = (row, col, piece, player, board) => {
 
   const moveRook = () => {
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row + i, col)) break; // Bas
+      if (!addMove(row + i, col)) break; 
     }
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row - i, col)) break; // Haut
+      if (!addMove(row - i, col)) break; 
     }
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row, col + i)) break; // Droite
+      if (!addMove(row, col + i)) break; 
     }
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row, col - i)) break; // Gauche
+      if (!addMove(row, col - i)) break; 
     }
   };
 
   const movePawn = () => {
     if (isInBounds(row + direction, col) && isEmpty(row + direction, col)) {
-      addMove(row + direction, col); // Mouvement normal
+      addMove(row + direction, col); 
     }
-    // Captures en diagonale
+    
     if (
       isInBounds(row + direction, col - 1) &&
       isEnemy(row + direction, col - 1)
     ) {
-      addMove(row + direction, col - 1); // Capture à gauche
+      addMove(row + direction, col - 1); 
     }
     if (
       isInBounds(row + direction, col + 1) &&
       isEnemy(row + direction, col + 1)
     ) {
-      addMove(row + direction, col + 1); // Capture à droite
+      addMove(row + direction, col + 1); 
     }
   };
 
   const moveLance = () => {
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row + i * direction, col)) break; // Ne pas reculer
+      if (!addMove(row + i * direction, col)) break; 
     }
   };
 
@@ -101,16 +101,16 @@ const getValidMoves = (row, col, piece, player, board) => {
 
   const moveBishop = () => {
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row - i, col - i)) break; // Diagonale haut gauche
+      if (!addMove(row - i, col - i)) break; 
     }
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row - i, col + i)) break; // Diagonale haut droite
+      if (!addMove(row - i, col + i)) break; 
     }
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row + i, col - i)) break; // Diagonale bas gauche
+      if (!addMove(row + i, col - i)) break; 
     }
     for (let i = 1; i < 9; i++) {
-      if (!addMove(row + i, col + i)) break; // Diagonale bas droite
+      if (!addMove(row + i, col + i)) break; 
     }
   };
 
