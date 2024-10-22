@@ -62,8 +62,13 @@ const Shogi = () => {
 
   const capturePiece = (row, col) => {
     const newBoard = board.map((r) => r.slice());
+    let pieceToMove = board[selectedPiece.row][selectedPiece.col];
+    if (isPromoted(row, turn, selectedPiece)) {
+      pieceToMove = promotePiece(pieceToMove);
+      console.log("Promotion ! Pièce promue : ", pieceToMove);
+    }
     const capturedPiece = newBoard[row][col];
-    newBoard[row][col] = board[selectedPiece.row][selectedPiece.col];
+    newBoard[row][col] = pieceToMove;
     newBoard[selectedPiece.row][selectedPiece.col] = null;
     const opponentKingPosition = findOpponentKingPosition();
     if (!isInCheck(opponentKingPosition, newBoard)) {
@@ -88,7 +93,12 @@ const Shogi = () => {
   const handleMove = (row, col) => {
     if (validPositions.some((pos) => pos.row === row && pos.col === col)) {
       const newBoard = board.map((r) => r.slice());
-      newBoard[row][col] = board[selectedPiece.row][selectedPiece.col];
+      let pieceToMove = board[selectedPiece.row][selectedPiece.col];
+      if (isPromoted(row, turn, selectedPiece)) {
+        pieceToMove = promotePiece(pieceToMove);
+        alert("Promotion ! Pièce promue.");
+      }
+      newBoard[row][col] = pieceToMove;
       newBoard[selectedPiece.row][selectedPiece.col] = null;
       setBoard(newBoard);
       setTurn(turn === 1 ? 2 : 1);
@@ -123,6 +133,33 @@ const Shogi = () => {
     return validPositions.some(
       (pos) => pos.row === kingPosition.row && pos.col === kingPosition.col
     );
+  };
+
+  const promotionMapping = {
+    P: "O", // Pion → Général d'Or
+    L: "O", // Lance → Général d'Or
+    C: "O", // Cavalier → Général d'Or
+    F: "F+", // Fou → Fou promu
+    T: "T+", // Tour → Tour promue
+  };
+
+  const promotePiece = (piece) => {
+    const basePiece = piece.toUpperCase();
+    if (promotionMapping[basePiece]) {
+      return turn === 1
+        ? promotionMapping[basePiece]
+        : promotionMapping[basePiece].toLowerCase();
+    }
+    return piece;
+  };
+
+  const isPromoted = (row, player) => {
+    if (player === 1 && row > 5) {
+      return true;
+    } else if (player === 2 && row < 3) {
+      return true;
+    }
+    return false;
   };
 
   return (

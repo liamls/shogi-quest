@@ -114,6 +114,16 @@ const getValidMoves = (row, col, piece, player, board) => {
     }
   };
 
+  const movePromotedBishop = () => {
+   moveBishop();
+   moveGoldGeneral();
+  };
+
+  const movePromotedRook = () => {
+    moveRook();
+    moveGoldGeneral();
+  };
+
   switch (piece.toLowerCase()) {
     case "r":
       moveKing();
@@ -138,6 +148,12 @@ const getValidMoves = (row, col, piece, player, board) => {
       break;
     case "f":
       moveBishop();
+      break;
+    case "f+":
+      movePromotedBishop();
+      break;
+    case "t+":
+      movePromotedRook();
       break;
     default:
       break;
