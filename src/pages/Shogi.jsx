@@ -4,19 +4,18 @@ import initialBoard from "../utils/initialBoard";
 import pieceDescriptions from "../utils/pieceDescriptions";
 
 const colors = {
-  player1Background: "bg-gray-800",
-  player2Background: "bg-gray-600",
-  boardBackground: "bg-white",
-  selectedPiece: "bg-yellow-500",
-  validMove: "bg-green-500",
-  resetButton: "bg-red-600",
-  resetButtonHover: "bg-red-700",
-  moveHistoryBackground: "bg-gray-700",
-  pieceText: "text-white",
-  historyText: "text-white",
-  descriptionText: "text-gray-300",
-  border: "border-gray-400",
-  borderLight: "border-gray-600",
+  player1Background: "bg-gray-600", // Couleur de fond du joueur 1 (clair)
+  player2Background: "bg-gray-700", // Couleur de fond du joueur 2 (clair)
+  boardBackground: "bg-gray-400", // Couleur du plateau (beige clair)
+  selectedPiece: "bg-orange-400", // Couleur pour les pièces sélectionnées (orange vif)
+  validMove: "bg-green-400", // Couleur pour les coups valides (vert clair)
+  resetButton: "bg-red-600", // Couleur du bouton de réinitialisation (rouge)
+  moveHistoryBackground: "bg-gray-500", // Couleur de fond de l'historique des coups (gris clair)
+  pieceText: "text-white", // Couleur du texte des pièces (noir)
+  historyText: "text-white", // Couleur du texte de l'historique (noir)
+  descriptionText: "text-white", // Couleur du texte de description (gris foncé)
+  border: "border-gray-500", // Couleur de la bordure (gris)
+  borderLight: "border-gray-400", // Couleur de la bordure légère (gris clair)
 };
 
 const Shogi = () => {
@@ -81,7 +80,6 @@ const Shogi = () => {
     let pieceToMove = board[selectedPiece.row][selectedPiece.col];
     if (isPromoted(row, turn, selectedPiece)) {
       pieceToMove = promotePiece(pieceToMove);
-      alert("Promotion ! Pièce promue.");
     }
     const capturedPiece = newBoard[row][col];
     newBoard[row][col] = pieceToMove;
@@ -112,7 +110,6 @@ const Shogi = () => {
       let pieceToMove = board[selectedPiece.row][selectedPiece.col];
       if (isPromoted(row, turn, selectedPiece)) {
         pieceToMove = promotePiece(pieceToMove);
-        alert("Promotion ! Pièce promue.");
       }
       newBoard[row][col] = pieceToMove;
       newBoard[selectedPiece.row][selectedPiece.col] = null;
@@ -204,11 +201,14 @@ const Shogi = () => {
               const isValidMove = validPositions.some(
                 (pos) => pos.row === rowIndex && pos.col === colIndex
               );
+
+              // Couleur du joueur
               const playerColor = piece
                 ? piece === piece.toUpperCase()
                   ? colors.player1Background // Joueur 1 (majuscule)
                   : colors.player2Background // Joueur 2 (minuscule)
                 : colors.boardBackground;
+
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
@@ -216,10 +216,12 @@ const Shogi = () => {
                   className={`cursor-pointer hover:font-bold w-12 h-12 flex items-center justify-center border-2 ${
                     colors.border
                   } transition-transform duration-200 ease-in-out transform ${
-                    isSelected ? colors.selectedPiece + " scale-110" : ""
-                  } ${
-                    isValidMove ? colors.validMove + " scale-110" : ""
-                  } ${playerColor} ${colors.pieceText}`}
+                    isValidMove
+                      ? colors.validMove + " scale-110" // Priorité à validMove
+                      : isSelected
+                      ? colors.selectedPiece + " scale-110"
+                      : playerColor
+                  } ${colors.pieceText}`}
                 >
                   {piece}
                 </div>
@@ -235,7 +237,7 @@ const Shogi = () => {
             setWinner(null);
             setMoveHistory([]);
           }}
-          className={`m-3 ${colors.resetButton} ${colors.resetButtonHover} text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out hover:${colors.resetButtonHover} focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50`}
+          className={`m-3 ${colors.resetButton} text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out hover:${colors.resetButtonHover}`}
         >
           Reset
         </button>
