@@ -3,6 +3,22 @@ import getValidMoves from "../utils/pieceMoves";
 import initialBoard from "../utils/initialBoard";
 import pieceDescriptions from "../utils/pieceDescriptions";
 
+const colors = {
+  player1Background: "bg-gray-800",
+  player2Background: "bg-gray-600",
+  boardBackground: "bg-white",
+  selectedPiece: "bg-yellow-500",
+  validMove: "bg-green-500",
+  resetButton: "bg-red-600",
+  resetButtonHover: "bg-red-700",
+  moveHistoryBackground: "bg-gray-700",
+  pieceText: "text-white",
+  historyText: "text-white",
+  descriptionText: "text-gray-300",
+  border: "border-gray-400",
+  borderLight: "border-gray-600",
+};
+
 const Shogi = () => {
   const [board, setBoard] = useState(initialBoard);
   const [turn, setTurn] = useState(1);
@@ -65,7 +81,7 @@ const Shogi = () => {
     let pieceToMove = board[selectedPiece.row][selectedPiece.col];
     if (isPromoted(row, turn, selectedPiece)) {
       pieceToMove = promotePiece(pieceToMove);
-      console.log("Promotion ! Pièce promue : ", pieceToMove);
+      alert("Promotion ! Pièce promue.");
     }
     const capturedPiece = newBoard[row][col];
     newBoard[row][col] = pieceToMove;
@@ -165,7 +181,7 @@ const Shogi = () => {
   return (
     <div
       className={`flex space-center min-h-screen ${
-        turn === 1 ? "bg-gray-800" : "bg-gray-600"
+        turn === 1 ? colors.player1Background : colors.player2Background
       }`}
     >
       <div className="flex flex-col items-center justify-center w-1/2 ml-20">
@@ -188,13 +204,22 @@ const Shogi = () => {
               const isValidMove = validPositions.some(
                 (pos) => pos.row === rowIndex && pos.col === colIndex
               );
+              const playerColor = piece
+                ? piece === piece.toUpperCase()
+                  ? colors.player1Background // Joueur 1 (majuscule)
+                  : colors.player2Background // Joueur 2 (minuscule)
+                : colors.boardBackground;
               return (
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   onClick={() => handleClick(rowIndex, colIndex)}
-                  className={`cursor-pointer hover:font-bold w-12 h-12 flex items-center justify-center border-2 border-gray-400 transition-transform duration-200 ease-in-out transform  ${
-                    isSelected ? "bg-yellow-500 scale-110" : ""
-                  } ${isValidMove ? "bg-green-500 scale-110" : ""}  text-white`}
+                  className={`cursor-pointer hover:font-bold w-12 h-12 flex items-center justify-center border-2 ${
+                    colors.border
+                  } transition-transform duration-200 ease-in-out transform ${
+                    isSelected ? colors.selectedPiece + " scale-110" : ""
+                  } ${
+                    isValidMove ? colors.validMove + " scale-110" : ""
+                  } ${playerColor} ${colors.pieceText}`}
                 >
                   {piece}
                 </div>
@@ -210,36 +235,43 @@ const Shogi = () => {
             setWinner(null);
             setMoveHistory([]);
           }}
-          className="m-3 bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
+          className={`m-3 ${colors.resetButton} ${colors.resetButtonHover} text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out hover:${colors.resetButtonHover} focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50`}
         >
           Reset
         </button>
       </div>
       <div className="flex flex-col w-1/4">
-        <div className="h-3/4 p-4 bg-gray-700 rounded-lg shadow-lg m-4 border border-gray-600">
+        <div
+          className={`h-3/4 p-4 ${colors.moveHistoryBackground} rounded-lg shadow-lg m-4 border ${colors.borderLight}`}
+        >
           <h3 className="text-lg font-bold mb-2 text-white">
             Historique des Coups
           </h3>
-          <ul className="overflow-y-auto">
-            {moveHistory.map((move, index) => (
-              <li
-                key={index}
-                className="border-b border-gray-600 py-1 text-white"
-              >
-                <span className="font-bold">J{move.player} : </span>
-                {`(${move.from.row}, ${move.from.col}) à (${move.to.row}, ${
-                  move.to.col
-                }) ${move.piece ? `- Pièce capturée: ${move.piece}` : ""}`}
-              </li>
-            ))}
-          </ul>
+          {moveHistory.length === 0 ? (
+            <p className={`${colors.historyText} text-center`}>
+              Aucune historique disponible
+            </p>
+          ) : (
+            <ul className="list-disc pl-5">
+              {moveHistory.map((move, index) => (
+                <li key={index} className={`${colors.historyText}`}>
+                  Joueur {move.player} : {move.from.row}-{move.from.col} à{" "}
+                  {move.to.row}-{move.to.col}
+                  {move.piece && ` (Capture ${move.piece})`}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <div className="h-1/4 p-4 bg-gray-700 rounded-lg shadow-lg m-4 border border-gray-600">
-          <h3 className="text-lg font-bold mb-2 text-white">Description</h3>
+        <div
+          className={`h-1/4 p-4 ${colors.moveHistoryBackground} rounded-lg shadow-lg m-4 border ${colors.borderLight}`}
+        >
           {pieceInfo && (
-            <div className="mt-4 border-t border-gray-600 pt-2 text-white">
-              <h4 className="font-semibold">{pieceInfo.name}</h4>
-              <p className="text-gray-300">{pieceInfo.description}</p>
+            <div>
+              <h4 className={`font-bold text-white`}>{pieceInfo.name}</h4>
+              <p className={`${colors.descriptionText}`}>
+                {pieceInfo.description}
+              </p>
             </div>
           )}
         </div>
